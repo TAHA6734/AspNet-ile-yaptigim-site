@@ -1,0 +1,193 @@
+﻿@model Site.Models.Kullanici
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<style>
+    body {
+        background-color: #f0f4f8;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: stretch;
+    }
+
+    /* Sol taraftaki profil kutusu */
+    .profil-container {
+        background-color: #ffffff;
+        padding: 30px;
+        width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        color: #333;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+        margin: 20px;
+        flex-shrink: 0;
+    }
+
+    .profil-container h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .profil-container p {
+        margin: 10px 0;
+        font-size: 16px;
+    }
+
+    .profil-container a {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+    }
+
+    .profil-container a:hover {
+        background-color: #2980b9;
+    }
+
+    /* Sağdaki içerik alanı */
+    .content {
+        flex-grow: 1;
+        background: white;
+        margin: 20px;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* To-Do List stilleri */
+    #todoForm {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    #todoForm input[type="text"] {
+        padding: 10px;
+        width: 70%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    #todoForm button {
+        padding: 10px 20px;
+        margin-left: 10px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    #todoForm button:hover {
+        background-color: #2980b9;
+    }
+
+    ul#todoList {
+        list-style: none;
+        padding-left: 0;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    ul#todoList li {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 16px;
+    }
+
+    ul#todoList li button {
+        background-color: transparent;
+        border: none;
+        color: #e74c3c;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    ul#todoList li button:hover {
+        color: #c0392b;
+    }
+
+    /* Hoşgeldin mesajı */
+    .hosgeldin {
+        text-align: center;
+        font-size: 24px;
+        color: #2c3e50;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+</style>
+
+<div class="profil-container">
+    <h2>@Model.Isim @Model.Soyisim'in Profili</h2>
+    <p><strong>Yaş:</strong> @Model.Yas</p>
+    <p><strong>E-posta:</strong> @Model.Email</p>
+    <a asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
+</div>
+
+<div class="content">
+    <div class="hosgeldin">
+        Hoş Geldin, @Model.Isim!
+    </div>
+
+    <h2>Yapılacaklar Listesi</h2>
+
+    <form id="todoForm">
+        <input type="text" id="todoInput" placeholder="Yeni yapılacak..." autocomplete="off" required />
+        <button type="submit">Ekle</button>
+    </form>
+
+    <ul id="todoList"></ul>
+</div>
+
+<script>
+    const form = document.getElementById('todoForm');
+    const input = document.getElementById('todoInput');
+    const list = document.getElementById('todoList');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const text = input.value.trim();
+        if(text === '') return;
+
+        const li = document.createElement('li');
+        li.textContent = text;
+
+        const btn = document.createElement('button');
+        btn.textContent = '×';
+        btn.title = "Sil";
+        btn.addEventListener('click', () => {
+            list.removeChild(li);
+        });
+
+        li.appendChild(btn);
+        list.appendChild(li);
+
+        input.value = '';
+        input.focus();
+    });
+</script>
