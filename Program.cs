@@ -1,55 +1,79 @@
 using Site.Data;
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Site.Services;
+using Oracle.EntityFrameworkCore;
+using Site.Middlewares;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-// Veritabanı bağlantısı
-builder.Services.AddDbContext<UygulamaDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        new MySqlServerVersion(new Version(8, 0, 34))
-    )
-);
-
-// Cookie Authentication ayarları
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+internal class Program
+{
+    private static void Main(string[] args)
     {
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/Login";
-    });
+        var builder = WebApplication.CreateBuilder(args);
 
-// Kestrel sadece HTTP portunu dinlesin (HTTPS kaldırıldı)
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenLocalhost(5078); // sadece HTTP portu
-});
+        builder.Services.AddControllersWithViews();
+        builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
-var app = builder.Build();
+        builder.Services.AddDbContext<UygulamaDbContext>(options =>
+            options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection"))
+        );
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/Login";
+            });
+
+        builder.Services.AddSingleton<SiteCacheService>(); // 🟢 Site adı için Singleton servis
+
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenLocalhost(5000);
+        });
+
+        var app = builder.Build();
+
+        LoadSiteDetails(app.Services); // 🟢 Site adını başta belleğe al
+
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Home/Error");
+            app.UseHsts();
+        }
+
+        // CUSTOM MIDDLEWARE’LER
+        app.UseMiddleware<MaintenanceMiddleware>();
+        app.UseMiddleware<IpControlMiddleware>();
+        app.UseMiddleware<ErrorHandlingMiddleware>();
+        app.UseMiddleware<LogMiddleware>();
+
+        // 🔴 Artık kullanılmayacak:
+        // app.UseMiddleware<SiteNameMiddleware>();
+
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        app.Run();
+    }
+
+    // 🟢 Site adını yükleyen method
+    private static void LoadSiteDetails(IServiceProvider services)
+    {
+        using (var scope = services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<UygulamaDbContext>();
+            var cache = scope.ServiceProvider.GetRequiredService<SiteCacheService>();
+
+            var siteAdi = db.SiteIsim.FirstOrDefault(s => s.Id == 1)?.Isim ?? "Site";
+            cache.SiteAdiniAyarla(siteAdi);
+            Console.WriteLine("📌 Site adı yüklendi: " + siteAdi);
+        }
+    }
 }
-
-// HTTPS yönlendirmeyi kaldırdım, sadece HTTP olacak
-// app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();

@@ -19,18 +19,22 @@ namespace Site.Controllers
             _db = db;
         }
 
-        public IActionResult Index()
-        {
-            var userId = User.FindFirstValue("Id");
+     public IActionResult Index()
+{
+    // Middleware'den gelen SiteAdi değerini alıyoruz
+    var siteAdi = HttpContext.Items["SiteAdi"]?.ToString() ?? "Site";
+    ViewBag.SiteAdi = siteAdi;
 
-            if (int.TryParse(userId, out int id))
-            {
-                var kullanici = _db.Kullanicilar.Find(id);
-                return View(kullanici);
-            }
+    var userId = User.FindFirstValue("Id");
 
-            return RedirectToAction("Login", "Account");
-        }
+    if (int.TryParse(userId, out int id))
+    {
+        var kullanici = _db.Kullanicilar.Find(id);
+        return View(kullanici);
+    }
+
+    return RedirectToAction("Login", "Account");
+}
 
         public IActionResult Privacy()
         {

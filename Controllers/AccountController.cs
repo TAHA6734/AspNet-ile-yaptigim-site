@@ -1,92 +1,141 @@
-using Microsoft.AspNetCore.Mvc;//Web uygulamalrinda controller ve view gibi MVC icerir
-using Site.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Site.Models;
-using Microsoft.AspNetCore.Authentication;// 1 bu ikiside kullanici kimlik dogrulama islemlerinde kullanilir
-using Microsoft.AspNetCore.Authentication.Cookies;// 2 cerz tabanli oturum yonetimi
-using System.Security.Claims;//kimlik bilgilerni tasinak icin 
-using Microsoft.EntityFrameworkCore;//VT islemlerini sorgular async 
-using Microsoft.AspNetCore.Authorization;  // Yetkilendirme Belirli sayfalara sadece giris yapmis kullanicilar erisebilir
+using System.Text;
+using AuthService = Site.Services.IAuthenticationService;
 
 namespace Site.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UygulamaDbContext _db;//readonly sadece constructer disardan degistirilemez 
+        private readonly AuthService _authService;
 
-        public AccountController(UygulamaDbContext db)
+        public AccountController(AuthService authService)
         {
-            _db = db;
+            _authService = authService;
         }
 
-        // GET: /Account/Register
+        // Kayıt Ol - GET
         [HttpGet]
-        public IActionResult Register()//Kullanicita bis redister sayfasi gosterirli 
+        public IActionResult Register()
         {
             return View();
         }
 
-        // POST: /Account/Register
+        // Kayıt Ol - POST
         [HttpPost]
         public async Task<IActionResult> Register(Kullanici kullanici)
         {
-            if (ModelState.IsValid)
-            {
-                kullanici.Sifre = BCrypt.Net.BCrypt.HashPassword(kullanici.Sifre);
-
-                // Kullanıcıyı veritabanına kaydet
-                _db.Kullanicilar.Add(kullanici);
-                await _db.SaveChangesAsync();
+            var result = await _authService.RegisterUserAsync(kullanici);
+            if (result)
                 return RedirectToAction("Login");
-            }
+
             return View(kullanici);
         }
 
-        // GET: /Account/Login
+        // Giriş Yap - GET
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
+        // Giriş Yap - POST
         [HttpPost]
         public async Task<IActionResult> Login(string Email, string Sifre)
         {
-            var kullanici = await _db.Kullanicilar.FirstOrDefaultAsync(x => x.Email == Email);
-
-            if (kullanici != null && BCrypt.Net.BCrypt.Verify(Sifre, kullanici.Sifre))
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, kullanici.Isim + " " + kullanici.Soyisim),
-                    new Claim(ClaimTypes.Email, kullanici.Email),
-                    new Claim("Id", kullanici.Id.ToString())
-                };
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
+            var success = await _authService.LoginAsync(HttpContext, Email, Sifre);
+            if (success)
                 return RedirectToAction("Index", "Home");
-            }
 
             ViewBag.Mesaj = "Hatalı e-posta ya da şifre!";
             return View();
         }
 
-        // /Account/Logout
+        // Çıkış Yap
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
 
-        // BURAYA EKLEDİM: Kullanıcı listesini getiren action
+        // Kullanıcı Listesi (Giriş zorunlu)
         [Authorize]
         public async Task<IActionResult> Kullanicilar()
         {
-            var kullanicilar = await _db.Kullanicilar.ToListAsync();
-            return View(kullanicilar);
+            var list = await _authService.GetAllUsersAsync();
+            return View(list);
+        }
+
+        // Kullanıcıyı Düzenle - GET
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var kullanici = await _authService.GetUserByIdAsync(id);
+            if (kullanici == null)
+                return NotFound();
+
+            return View(kullanici);
+        }
+
+        // Kullanıcıyı Düzenle - POST
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit(Kullanici kullanici)
+        {
+            if (!ModelState.IsValid)
+                return View(kullanici);
+
+            var success = await _authService.UpdateUserAsync(kullanici);
+            if (!success)
+                return NotFound();
+
+            return RedirectToAction("Kullanicilar");
+        }   
+
+        // API: Kullanıcı JSON verisi al
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetUserJson(int id)
+        {
+            var user = await _authService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            return Json(user);
+        }
+
+        // API: Kullanıcıyı JSON ile güncelle
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateUserJson([FromBody] Kullanici kullanici)
+        {
+            var result = await _authService.UpdateUserAsync(kullanici);
+            if (!result)
+                return BadRequest();
+
+            return Ok();
+        }
+
+        // CSV Export
+        [Authorize]
+        public async Task<IActionResult> ExportCsv()
+        {
+            var kullanicilar = await _authService.GetAllUsersAsync();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("Id,Isim,Soyisim,Email,Yas");
+
+            foreach (var k in kullanicilar)
+            {
+                sb.AppendLine($"{k.Id},{k.Isim},{k.Soyisim},{k.Email},{k.Yas}");
+            }
+
+            var bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            return File(bytes, "text/csv", "kullanicilar.csv");
         }
     }
 }

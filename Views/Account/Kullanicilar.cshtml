@@ -1,34 +1,137 @@
-@model List<Site.Models.Kullanici>
-@using Microsoft.AspNetCore.Http 
+@model List<Site.Models.Kullanici>?
 
 @{
     ViewData["Title"] = "Kullanıcılar Listesi";
 }
 
-<p><strong>Giriş Yapan:</strong> @User.Identity.Name</p>
+<p><strong>Giriş Yapan:</strong> @(User?.Identity?.Name ?? "Misafir")</p>
 
 <h2>Kayıtlı Kullanıcılar</h2>
 
-<table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
-    <thead style="background-color: #f0f0f0;">
-        <tr>
-            <th>ID</th>
-            <th>İsim</th>
-            <th>Soyisim</th>
-            <th>Email</th>
-            <th>Yaş</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var kullanici in Model)
-        {
+<p>
+    <a href="/Dosyalar/Yukle" style="display:inline-block; padding:10px 15px; background:#2980b9; color:#fff; border-radius:6px; text-decoration:none;">
+    Çalışanlar Yükleme Sayfasına Git
+</a>
+</p>
+
+<p>
+    <a href="/Account/ExportCsv" class="btn btn-success">CSV Olarak İndir</a>
+</p>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
             <tr>
-                <td>@kullanici.Id</td>
-                <td>@kullanici.Isim</td>
-                <td>@kullanici.Soyisim</td>
-                <td>@kullanici.Email</td>
-                <td>@kullanici.Yas</td>
+                <th>ID</th>
+                <th>İsim</th>
+                <th>Soyisim</th>
+                <th>Email</th>
+                <th>Yaş</th>
+                <th>İşlem</th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var kullanici in Model)
+            {
+                <tr>
+                    <td>@kullanici.Id</td>
+                    <td>@kullanici.Isim</td>
+                    <td>@kullanici.Soyisim</td>
+                    <td>@kullanici.Email</td>
+                    <td>@kullanici.Yas</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="duzenleModalAc(@kullanici.Id)">Düzenle</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Gösterilecek kullanıcı bulunamadı.</p>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="duzenleModal" tabindex="-1" aria-labelledby="duzenleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="duzenleModalLabel">Kullanıcıyı Düzenle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id" />
+        <div class="mb-2">
+            <label>İsim</label>
+            <input type="text" id="edit-isim" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Soyisim</label>
+            <input type="text" id="edit-soyisim" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Email</label>
+            <input type="email" id="edit-email" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Yaş</label>
+            <input type="number" id="edit-yas" class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-success" onclick="kaydetDegisiklik()">Kaydet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <script>
+        function duzenleModalAc(id) {
+            fetch(`/Account/GetUserJson?id=${id}`)
+                .then(res => {
+                    if (!res.ok) throw new Error("Kullanıcı alınamadı");
+                    return res.json();
+                })
+                .then(k => {
+                    document.getElementById("edit-id").value = k.id;
+                    document.getElementById("edit-isim").value = k.isim;
+                    document.getElementById("edit-soyisim").value = k.soyisim;
+                    document.getElementById("edit-email").value = k.email;
+                    document.getElementById("edit-yas").value = k.yas;
+
+                    new bootstrap.Modal(document.getElementById("duzenleModal")).show();
+                })
+                .catch(err => alert("Hata: Kullanıcı bilgileri getirilemedi."));
         }
-    </tbody>
-</table>
+
+        function kaydetDegisiklik() {
+            const kullanici = {
+                id: document.getElementById("edit-id").value,
+                isim: document.getElementById("edit-isim").value,
+                soyisim: document.getElementById("edit-soyisim").value,
+                email: document.getElementById("edit-email").value,
+                yas: parseInt(document.getElementById("edit-yas").value)
+            };
+
+            fetch('/Account/UpdateUserJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(kullanici)
+            })
+            .then(res => {
+                if (res.ok) {
+                    location.reload(); // Başarılıysa sayfayı yenile
+                } else {
+                    alert("Güncelleme başarısız oldu.");
+                }
+            })
+            .catch(err => alert("Sunucu hatası: " + err));
+        }
+    </script>
+}

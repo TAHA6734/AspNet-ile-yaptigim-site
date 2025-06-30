@@ -3,114 +3,158 @@
     ViewData["Title"] = "Profilim";
 }
 
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
+
 <style>
-    body {
-        background-color: #f0f4f8;
-        font-family: Arial, sans-serif;
+    html, body {
         margin: 0;
-        height: 100vh;
-        display: flex;
-        align-items: stretch;
+        padding: 0;
+        font-family: 'Montserrat', sans-serif;
+        background: #f9fbfc;
+        color: #333;
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
     }
 
-    /* Sol taraftaki profil kutusu */
+    /* NAVBAR */
+    nav {
+        width: 100%;
+        background-color: #25D366;
+        padding: 8px 0; /* daha ince */
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    nav h1 {
+        color: #e0f2e9;
+        font-weight: 600;
+        font-size: 24px;
+        margin: 0;
+    }
+
+    /* ANA CONTAINER */
+    .main-container {
+        display: flex;
+        gap: 30px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 10px;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    /* PROFIL */
     .profil-container {
-        background-color: #ffffff;
-        padding: 30px;
-        width: 300px;
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        color: #333;
-        position: sticky;
-        top: 20px;
+        flex: 1;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        padding: 25px;
+        text-align: center;
         height: fit-content;
-        margin: 20px;
-        flex-shrink: 0;
     }
 
     .profil-container h2 {
-        color: #2c3e50;
-        margin-bottom: 25px;
-        text-align: center;
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
     }
 
     .profil-container p {
-        margin: 10px 0;
         font-size: 16px;
+        margin: 10px 0;
+        font-weight: 500;
+        color: #555;
     }
 
     .profil-container a {
         display: inline-block;
-        margin-top: 20px;
-        text-decoration: none;
-        background-color: #3498db;
+        margin-top: 25px;
+        background-color: #25D366;
         color: white;
-        padding: 10px 20px;
-        border-radius: 6px;
+        padding: 10px 24px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s, box-shadow 0.3s;
+        box-shadow: 0 6px 12px rgba(37, 211, 102, 0.35);
     }
 
     .profil-container a:hover {
-        background-color: #2980b9;
+        background-color: #1eb954;
+        box-shadow: 0 8px 16px rgba(30, 185, 84, 0.5);
     }
 
-    /* Sağdaki içerik alanı */
+    /* TODO LIST */
     .content {
-        flex-grow: 1;
-        background: white;
-        margin: 20px;
+        flex: 2;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
         display: flex;
         flex-direction: column;
     }
 
     .content h2 {
-        color: #2c3e50;
-        margin-bottom: 20px;
         text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 25px;
     }
 
-    /* To-Do List stilleri */
     #todoForm {
         display: flex;
+        gap: 10px;
         justify-content: center;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
-    #todoForm input[type="text"] {
-        padding: 10px;
-        width: 70%;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+    #todoForm input {
+        flex-grow: 1;
+        padding: 10px 18px;
+        border-radius: 30px;
+        border: 2px solid #ccc;
         font-size: 16px;
+    }
+
+    #todoForm input:focus {
+        border-color: #25D366;
+        outline: none;
     }
 
     #todoForm button {
-        padding: 10px 20px;
-        margin-left: 10px;
-        background-color: #3498db;
+        background: #25D366;
         color: white;
+        padding: 10px 24px;
         border: none;
-        border-radius: 5px;
+        border-radius: 30px;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 16px;
+        transition: background 0.3s, box-shadow 0.3s;
     }
 
     #todoForm button:hover {
-        background-color: #2980b9;
+        background: #1eb954;
     }
 
     ul#todoList {
         list-style: none;
-        padding-left: 0;
-        max-width: 600px;
-        margin: 0 auto;
+        padding: 0;
+        margin: 0;
     }
 
     ul#todoList li {
-        padding: 12px 15px;
-        border-bottom: 1px solid #ddd;
+        background: #f7f9fa;
+        margin-bottom: 12px;
+        padding: 12px 18px;
+        border-radius: 30px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -118,61 +162,61 @@
     }
 
     ul#todoList li button {
-        background-color: transparent;
+        background: none;
         border: none;
         color: #e74c3c;
-        font-weight: bold;
+        font-size: 22px;
         cursor: pointer;
-        font-size: 20px;
-        line-height: 1;
     }
 
-    ul#todoList li button:hover {
-        color: #c0392b;
-    }
-
-    /* Hoşgeldin mesajı */
-    .hosgeldin {
-        text-align: center;
-        font-size: 24px;
-        color: #2c3e50;
-        margin-top: 20px;
-        margin-bottom: 20px;
+    footer {
         width: 100%;
+        text-align: center;
+        font-size: 14px;
+        padding: 10px 0;
+        color: #777;
+        background: #f0f0f0;
+        border-top: 1px solid #ccc;
+        margin-top: 30px;
     }
+
 </style>
 
-<div class="profil-container">
-    <h2>@Model.Isim @Model.Soyisim'in Profili</h2>
-    <p><strong>Yaş:</strong> @Model.Yas</p>
-    <p><strong>E-posta:</strong> @Model.Email</p>
-    <a asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
+<!-- Navbar -->
+<nav role="banner" aria-label="Ana Navigasyon">
+    <h1>Hoşgeldin, @Model.Isim!</h1>
+</nav>
+
+<!-- Ana içerik -->
+<div class="main-container" role="main">
+    <aside class="profil-container" aria-label="Kullanıcı Profili">
+        <h2>@Model.Isim @Model.Soyisim'in Profili</h2>
+        <p><strong>Yaş:</strong> @Model.Yas</p>
+        <p><strong>E-posta:</strong> @Model.Email</p>
+        <a asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
+    </aside>
+
+    <section class="content" aria-label="Yapılacaklar Listesi">
+        <h2>Yapılacaklar Listesi</h2>
+        <form id="todoForm">
+            <input type="text" id="todoInput" placeholder="Yeni yapılacak..." required />
+            <button type="submit">Ekle</button>
+        </form>
+        <ul id="todoList"></ul>
+    </section>
 </div>
 
-<div class="content">
-    <div class="hosgeldin">
-        Hoş Geldin, @Model.Isim!
-    </div>
 
-    <h2>Yapılacaklar Listesi</h2>
-
-    <form id="todoForm">
-        <input type="text" id="todoInput" placeholder="Yeni yapılacak..." autocomplete="off" required />
-        <button type="submit">Ekle</button>
-    </form>
-
-    <ul id="todoList"></ul>
-</div>
 
 <script>
     const form = document.getElementById('todoForm');
     const input = document.getElementById('todoInput');
     const list = document.getElementById('todoList');
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
         const text = input.value.trim();
-        if(text === '') return;
+        if (text === '') return;
 
         const li = document.createElement('li');
         li.textContent = text;
@@ -186,7 +230,6 @@
 
         li.appendChild(btn);
         list.appendChild(li);
-
         input.value = '';
         input.focus();
     });

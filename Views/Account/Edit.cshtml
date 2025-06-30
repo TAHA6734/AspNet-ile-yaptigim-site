@@ -1,0 +1,43 @@
+@model Site.Models.Kullanici
+
+@{
+    ViewData["Title"] = "Kullanıcıyı Düzenle";
+}
+
+<!-- Google Fonts Montserrat -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
+<!-- Harici CSS dosyan -->
+<link rel="stylesheet" href="~/css/edit.css" />
+
+<div class="edit-container">
+    <h2>Kullanıcıyı Düzenle</h2>
+
+    <form asp-action="Edit" method="post" class="edit-form">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label asp-for="Isim"></label>
+            <input asp-for="Isim" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Soyisim"></label>
+            <input asp-for="Soyisim" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Yas"></label>
+            <input asp-for="Yas" class="form-control" />
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a asp-action="Kullanicilar" class="btn btn-cancel">İptal</a>
+        </div>
+    </form>
+</div>

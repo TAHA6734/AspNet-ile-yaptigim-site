@@ -1,0 +1,127 @@
+/* _content/Site/Views/Shared/_Layout.cshtml.rz.scp.css */
+/* Genel bağlantı stilleri */
+a.navbar-brand[b-99ebu3icm7] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-word;
+}
+
+a[b-99ebu3icm7] {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+a:hover[b-99ebu3icm7] {
+  color: #005fa3;
+  text-decoration: underline;
+}
+
+/* Bootstrap buton özelleştirmeleri */
+.btn-primary[b-99ebu3icm7] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Nav-pills aktif durum stili */
+.nav-pills .nav-link.active[b-99ebu3icm7],
+.nav-pills .show > .nav-link[b-99ebu3icm7] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Kenarlık stilleri */
+.border-top[b-99ebu3icm7] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-99ebu3icm7] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* Gölgelendirme */
+.box-shadow[b-99ebu3icm7] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+/* Cookie onay düğmesi */
+button.accept-policy[b-99ebu3icm7] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sayfa yapısı için: html ve body full height, flex column */
+html[b-99ebu3icm7], body[b-99ebu3icm7] {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9fbfc;
+}
+
+/* Ana içerik alanı esner, footer'a yapışmaz */
+.container[b-99ebu3icm7] {
+  flex: 1 0 auto;
+}
+
+/* NAVBAR özelleştirme (istersen nav’a özel class verip buraya da taşıyabiliriz) */
+nav.navbar[b-99ebu3icm7] {
+  background-color: #25D366 !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+nav.navbar .nav-link[b-99ebu3icm7],
+nav.navbar .navbar-brand[b-99ebu3icm7] {
+  color: #ffffff !important;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+}
+
+nav.navbar .nav-link:hover[b-99ebu3icm7],
+nav.navbar .navbar-brand:hover[b-99ebu3icm7] {
+  color: #dffbe5 !important;
+}
+
+/* Dropdown stilleri */
+.dropdown-menu[b-99ebu3icm7] {
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item[b-99ebu3icm7] {
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover[b-99ebu3icm7] {
+  background-color: #e9f7ee;
+  color: #25D366;
+}
+
+/* Footer stil */
+.footer[b-99ebu3icm7] {
+  flex-shrink: 0;
+  background-color: #25D366;
+  color: white;
+  line-height: 60px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 -3px 10px rgba(37, 211, 102, 0.3);
+  white-space: nowrap;
+}
+
+.footer a[b-99ebu3icm7] {
+  color: #e0f2e9;
+  text-decoration: underline;
+}
+
+.footer a:hover[b-99ebu3icm7] {
+  color: #b3e6c1;
+}

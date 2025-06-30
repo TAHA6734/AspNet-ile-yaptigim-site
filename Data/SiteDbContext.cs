@@ -9,6 +9,7 @@ namespace Site.Data
         {
         }
 
-        public DbSet<Kullanici> Kullanicilar { get; set; }
+          public DbSet<Kullanici> Kullanicilar { get; set; }
+        public DbSet<SiteIsmi> SiteIsim { get; set; } 
     }
 }

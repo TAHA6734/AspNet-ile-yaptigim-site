@@ -1,28 +1,36 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
+﻿/* Genel bağlantı stilleri */
 a.navbar-brand {
   white-space: normal;
   text-align: center;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 a {
   color: #0077cc;
+  text-decoration: none;
 }
 
+a:hover {
+  color: #005fa3;
+  text-decoration: underline;
+}
+
+/* Bootstrap buton özelleştirmeleri */
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+/* Nav-pills aktif durum stili */
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
 
+/* Kenarlık stilleri */
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
@@ -30,19 +38,89 @@ a {
   border-bottom: 1px solid #e5e5e5;
 }
 
+/* Gölgelendirme */
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
+/* Cookie onay düğmesi */
 button.accept-policy {
   font-size: 1rem;
   line-height: inherit;
 }
 
+/* Sayfa yapısı için: html ve body full height, flex column */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9fbfc;
+}
+
+/* Ana içerik alanı esner, footer'a yapışmaz */
+.container {
+  flex: 1 0 auto;
+}
+
+/* NAVBAR özelleştirme (istersen nav’a özel class verip buraya da taşıyabiliriz) */
+nav.navbar {
+  background-color: #25D366 !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+nav.navbar .nav-link,
+nav.navbar .navbar-brand {
+  color: #ffffff !important;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+}
+
+nav.navbar .nav-link:hover,
+nav.navbar .navbar-brand:hover {
+  color: #dffbe5 !important;
+}
+
+/* Dropdown stilleri */
+.dropdown-menu {
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #e9f7ee;
+  color: #25D366;
+}
+
+/* Footer stil */
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
+  flex-shrink: 0;
+  background-color: #25D366;
+  color: white;
   line-height: 60px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 -3px 10px rgba(37, 211, 102, 0.3);
+  white-space: nowrap;
+}
+
+.footer a {
+  color: #e0f2e9;
+  text-decoration: underline;
+}
+
+.footer a:hover {
+  color: #b3e6c1;
 }
